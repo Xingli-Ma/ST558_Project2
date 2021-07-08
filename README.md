@@ -45,7 +45,8 @@ require(ggplot2)
 
 -- Discussion            
 
-```
 
-Reference      
+### Reference      
 https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
+```    
+
