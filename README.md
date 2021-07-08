@@ -1,10 +1,6 @@
-## Welcome to GitHub Pages
+## Project 2
 
-You can use the [editor on GitHub](https://github.com/Xingli-Ma/ST558_Project2/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Project 2: Creating Predictive Models and Automating Markdown Reports
+### Creating Predictive Models and Automating Markdown Reports
 
 ```markdown
 Syntax highlighted code block
