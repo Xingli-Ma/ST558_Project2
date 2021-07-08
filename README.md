@@ -37,5 +37,5 @@ Discussion
 
 ```
 
-**References**
+Reference
 https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
