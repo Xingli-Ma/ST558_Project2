@@ -1,31 +1,41 @@
 ## Project 2
 
-### The purpose of this project is to create Predictive Models and automate Markdown Reports.
+### The Purpose: Creating Predictive Models and Automate Markdown Reports.
+
+The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file include 16 columns: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed description on these variables can be find from the data website. In our predictive models, we want to use cnt as response, other variables as predictors, such as season, weekday, workingda, weathersit, temp, atemp, hum, windspeed. We will create seven predictive models, one for each day in a week, to predict the number of bike users in each day of the week. The main contents include **Exploratory Data Analysis**, **Predictive Models**, **Model Validation and Comparison**, **Prediction and Results**, and **Conclusion and Discussion**.
 
 ```markdown
-Syntax highlighted code block
+The following R packages are required to run the code to create this gitbub page.    
 
-# Header 1
-## Header 2
-### Header 3
+```{r}
+require(rmarkdown)
+require(knitr)
+require(dplyr)
+require(tidyverse)
+require(ggplot2)
+require(jsonlite)
+require(httr)
+```             
+### Exploratory Data Analysis   
 
-- Bulleted
-- List
+### Predictive Models
 
-1. Numbered
-2. List
+(Monday's Analysis)[MondayAnalysis.md]
+(Tuesday's Analysis)[TuesdayAnalysis.md]
+(Wednesday's Analysis)[WednesdayAnalysis.md]
+(Thursday's Analysis)[ThursdayAnalysis.md]
+(Friday's Analysis)[FridayAnalysis.md]
+(Saturday's Analysis)[SaturdayAnalysis.md]
+(Sunday's Analysis)[SundayAnalysis.md]
 
-**Bold** and _Italic_ and `Code` text
+### Conclusion and Discussion    
 
-[Link](url) and ![Image](src)
+Conclusion    
+
+
+Discussion    
+
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Xingli-Ma/ST558_Project2/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+**References**
+https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
