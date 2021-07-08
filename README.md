@@ -4,9 +4,7 @@ You can use the [editor on GitHub](https://github.com/Xingli-Ma/ST558_Project2/e
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Project 2: Creating Predictive Models and Automating Markdown Reports
 
 ```markdown
 Syntax highlighted code block
