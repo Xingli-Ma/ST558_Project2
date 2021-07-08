@@ -1,6 +1,6 @@
 ## Project 2
 
-### The purpose of this project is to **Create Predictive Models** and **Automate Markdown Reports**.
+### The purpose of this project is to create Predictive Models and automate Markdown Reports.
 
 ```markdown
 Syntax highlighted code block
