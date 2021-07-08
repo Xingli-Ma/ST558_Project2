@@ -13,8 +13,6 @@ require(knitr)
 require(dplyr)
 require(tidyverse)
 require(ggplot2)
-require(jsonlite)
-require(httr)
 ```             
 ### Exploratory Data Analysis   
 
