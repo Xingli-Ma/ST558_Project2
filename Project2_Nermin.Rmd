@@ -29,4 +29,7 @@ mondayTrain <- mondayData[mondayIndex, ]
 mondayTest <- mondayData[-mondayIndex, ]
 ```
 
+```{r headDayData}
+head(dayData)
+```
 
