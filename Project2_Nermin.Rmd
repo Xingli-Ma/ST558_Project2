@@ -1,0 +1,32 @@
+---
+title: "Project 2"
+author: "Nermin Bibic"
+date: "7/11/2021"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, message = FALSE, warning = FALSE, error = TRUE)
+```
+
+```{r, echo = FALSE}
+library(tidyverse)
+library(knitr)
+library(caret)
+```
+
+## Read Data and Split Into Training & Test Sets
+
+```{r}
+dayData <- read_csv("day.csv")
+mondayData <- filter(dayData, weekday == 1)
+set.seed(1)
+mondayIndex <- createDataPartition(mondayData$cnt, p = 0.7, list = FALSE)
+mondayTrain <- mondayData[mondayIndex, ]
+mondayTest <- mondayData[-mondayIndex, ]
+```
+
+
