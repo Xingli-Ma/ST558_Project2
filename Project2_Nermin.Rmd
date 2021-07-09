@@ -44,7 +44,7 @@ dayTest[cols] <- lapply(dayTest[cols], factor)
 ### Linear Regression With Main Effects & Interactions
 
 ```{r}
-lmFit <- train(cnt ~ ., data = dayTrain,
+lmFit <- train(cnt ~ .^2, data = dayTrain,
                method = "lm",
                preProcess = c("center", "scale"),
                trControl = trainControl(method = "cv", number = 10))
