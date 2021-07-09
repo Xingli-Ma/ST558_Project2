@@ -24,11 +24,10 @@ library(caret)
 # Read data and filter by day
 dayData <- read_csv("day.csv")
 mondayData <- filter(dayData, weekday == 1)
-mondayData <- mondayData[,-1]
+mondayData <- select(mondayData, -c(instant, weekday))
 
 # Convert categorical variables to factors
-cols <- c("season", "yr", "mnth", "holiday", "weekday",
-          "workingday", "weathersit")
+cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
 mondayData[cols] <- lapply(mondayData[cols], factor)
 mondayData$dteday = as.Date(mondayData$dteday, format = "%Y-%m-%d")
 
@@ -38,4 +37,29 @@ mondayIndex <- createDataPartition(mondayData$cnt, p = 0.7, list = FALSE)
 mondayTrain <- mondayData[mondayIndex, ]
 mondayTest <- mondayData[-mondayIndex, ]
 ```
+
+## Predictive Modeling
+
+### Linear Regression With Main Effects & Interactions
+
+```{r}
+lmFit <- train(cnt ~ ., data = mondayTrain,
+               method = "lm",
+               preProcess = c("center", "scale"),
+               trControl = trainControl(method = "cv", number = 10))
+```
+
+### Random Forest
+
+```{r}
+set.seed(4)
+rfFit <- train(cnt ~ ., data = mondayTrain,
+               method = "rf",
+               preProcess = c("center", "scale"),
+               trControl = trainControl(method = "cv",
+                                        number = 5),
+               tuneGrid = data.frame(mtry = 1:9)
+               )
+```
+
 
