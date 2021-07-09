@@ -21,19 +21,24 @@ library(caret)
 ## Read Data and Split Into Training & Test Sets
 
 ```{r}
+# Read data and filter by day
 dayData <- read_csv("day.csv")
 mondayData <- filter(dayData, weekday == 1)
+mondayData <- mondayData[,-1]
+
+# Convert categorical variables to factors
+mondayData$season <- as.factor(mondayData$season)
+mondayData$yr <- as.factor(mondayData$yr)
+mondayData$mnth <- as.factor(mondayData$mnth)
+mondayData$holiday <- as.factor(mondayData$holiday)
+mondayData$weekday <- as.factor(mondayData$weekday)
+mondayData$workingday <- as.factor(mondayData$workingday)
+mondayData$weathersit <- as.factor(mondayData$weathersit)
+
+# Split data to train and test sets
 set.seed(1)
 mondayIndex <- createDataPartition(mondayData$cnt, p = 0.7, list = FALSE)
 mondayTrain <- mondayData[mondayIndex, ]
-mondayTest <- mondayData[-mondayIndex, ]
-```
-
-```{r headDayData}
-head(dayData)
-```
-
-```{r dayDataTest}
 mondayTest <- mondayData[-mondayIndex, ]
 ```
 
