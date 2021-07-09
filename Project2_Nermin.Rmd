@@ -33,3 +33,7 @@ mondayTest <- mondayData[-mondayIndex, ]
 head(dayData)
 ```
 
+```{r dayDataTest}
+mondayTest <- mondayData[-mondayIndex, ]
+```
+
