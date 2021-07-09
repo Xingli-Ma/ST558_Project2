@@ -21,21 +21,22 @@ library(caret)
 ## Read Data and Split Into Training & Test Sets
 
 ```{r}
-# Read data and filter by day
+# Read and clean data
 dayData <- read_csv("day.csv")
-mondayData <- filter(dayData, weekday == 1)
-mondayData <- select(mondayData, -c(instant, weekday))
-
-# Convert categorical variables to factors
-cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
-mondayData[cols] <- lapply(mondayData[cols], factor)
-mondayData$dteday = as.Date(mondayData$dteday, format = "%Y-%m-%d")
+dayData <- filter(dayData, weekday == 1)
+dayData <- select(dayData, -c(instant, weekday))
+dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 
 # Split data to train and test sets
 set.seed(1)
-mondayIndex <- createDataPartition(mondayData$cnt, p = 0.7, list = FALSE)
-mondayTrain <- mondayData[mondayIndex, ]
-mondayTest <- mondayData[-mondayIndex, ]
+dayIndex <- createDataPartition(dayData$cnt, p = 0.7, list = FALSE)
+dayTrain <- dayData[mondayIndex, ]
+dayTest <- dayData[-mondayIndex, ]
+
+# Convert categorical variables to factors
+cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
+dayTrain[cols] <- lapply(dayTrain[cols], factor)
+dayTest[cols] <- lapply(dayTest[cols], factor)
 ```
 
 ## Predictive Modeling
@@ -43,7 +44,7 @@ mondayTest <- mondayData[-mondayIndex, ]
 ### Linear Regression With Main Effects & Interactions
 
 ```{r}
-lmFit <- train(cnt ~ ., data = mondayTrain,
+lmFit <- train(cnt ~ ., data = dayTrain,
                method = "lm",
                preProcess = c("center", "scale"),
                trControl = trainControl(method = "cv", number = 10))
@@ -52,8 +53,7 @@ lmFit <- train(cnt ~ ., data = mondayTrain,
 ### Random Forest
 
 ```{r}
-set.seed(4)
-rfFit <- train(cnt ~ ., data = mondayTrain,
+rfFit <- train(cnt ~ ., data = dayTrain,
                method = "rf",
                preProcess = c("center", "scale"),
                trControl = trainControl(method = "cv",
