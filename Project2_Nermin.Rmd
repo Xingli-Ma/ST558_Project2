@@ -30,6 +30,7 @@ mondayData <- mondayData[,-1]
 cols <- c("season", "yr", "mnth", "holiday", "weekday",
           "workingday", "weathersit")
 mondayData[cols] <- lapply(mondayData[cols], factor)
+mondayData$dteday = as.Date(mondayData$dteday, format = "%Y-%m-%d")
 
 # Split data to train and test sets
 set.seed(1)
