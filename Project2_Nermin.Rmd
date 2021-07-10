@@ -6,6 +6,8 @@ output:
   github_document:
     toc: yes
     toc_depth: 3
+params:
+  day: 1
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +25,7 @@ library(caret)
 ```{r}
 # Read and clean data
 dayData <- read_csv("day.csv")
-dayData <- filter(dayData, weekday == 1)
+dayData <- filter(dayData, weekday == params$day)
 dayData <- select(dayData, -c(instant, weekday))
 dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 
@@ -39,9 +41,30 @@ dayTrain[cols] <- lapply(dayTrain[cols], factor)
 dayTest[cols] <- lapply(dayTest[cols], factor)
 ```
 
+## Summarizations
+
+### Contingency Table Comparing Number of Users By Season
+
+```{r}
+dayTrainCopy <- dayTrain
+dayTrainCopy$cntRange <- cut(dayTrainCopy$cnt, c(0, 2000, 4000, 6000))
+levels(dayTrainCopy$cntRange) = c("<2000", "2001-4000", "4001-6000", ">6000")
+
+levels(dayTrainCopy$season) <- list("Winter" = 1,
+                                    "Spring" = 2,
+                                    "Summer" = 3,
+                                    "Fall" = 4)
+
+twoWayTab <- table(dayTrainCopy$season,
+                   dayTrainCopy$cntRange)
+kable(twoWayTab, caption = 'Season and Total Number of Users')
+```
+
+
+
 ## Predictive Modeling
 
-Prior to the models fit using linear regression, the first group member should provide a short but thorough explanation of the idea of a linear regression model.
+Provide a short but thorough explanation of the idea of a linear regression model.
 
 ### Linear Regression With Main Effects & 1st Order Interactions
 
@@ -66,5 +89,6 @@ rfFit <- train(cnt ~ ., data = dayTrain,
                trControl = trctrl)
 rfFit
 ```
+
 
 
