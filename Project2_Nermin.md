@@ -23,30 +23,14 @@ dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 # Split data to train and test sets
 set.seed(1)
 dayIndex <- createDataPartition(dayData$cnt, p = 0.7, list = FALSE)
-dayTrain <- dayData[mondayIndex, ]
-```
+dayTrain <- dayData[dayIndex, ]
+dayTest <- dayData[-dayIndex, ]
 
-    ## Error in `[.tbl_df`(dayData, mondayIndex, ): object 'mondayIndex' not found
-
-``` r
-dayTest <- dayData[-mondayIndex, ]
-```
-
-    ## Error in `[.tbl_df`(dayData, -mondayIndex, ): object 'mondayIndex' not found
-
-``` r
 # Convert categorical variables to factors
 cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
 dayTrain[cols] <- lapply(dayTrain[cols], factor)
-```
-
-    ## Error in lapply(dayTrain[cols], factor): object 'dayTrain' not found
-
-``` r
 dayTest[cols] <- lapply(dayTest[cols], factor)
 ```
-
-    ## Error in lapply(dayTest[cols], factor): object 'dayTest' not found
 
 ## Predictive Modeling
 

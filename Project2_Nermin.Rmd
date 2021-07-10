@@ -3,7 +3,7 @@ title: "Project 2"
 author: "Nermin Bibic"
 date: "7/11/2021"
 output:
-  html_document:
+  github_document:
     toc: yes
     toc_depth: 3
 ---
@@ -30,8 +30,8 @@ dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 # Split data to train and test sets
 set.seed(1)
 dayIndex <- createDataPartition(dayData$cnt, p = 0.7, list = FALSE)
-dayTrain <- dayData[mondayIndex, ]
-dayTest <- dayData[-mondayIndex, ]
+dayTrain <- dayData[dayIndex, ]
+dayTest <- dayData[-dayIndex, ]
 
 # Convert categorical variables to factors
 cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
@@ -49,11 +49,9 @@ Prior to the models fit using linear regression, the first group member should p
 
 ```
 
-Prior to each ensemble model, you should provide a short but reasonably thorough explanation of the ensemble model you are using (so one for each group member).
-
 ### Fit a random forest model on training dataset
 
-Random forest modeling involves multiple decision trees that form an ensemble. Random forest models are the same idea as bagging, but it makes bagged trees predictions more correlated with a smaller reduction in variance from aggregation. Since the random forest model selects a subset of predictors randomly, good predictors won't dominate the tree fits. If there is a very strong predictor, every bootstrap tree will likely use it for the first split. Here we are fitting a random forest model for the train set.
+Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final value used for the model was mtry = 26, where Rsquared equals 0.9507297.
 
 ```{r}
 # Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
