@@ -44,20 +44,21 @@ dayData <- read_csv("day.csv")
 dayData <- filter(dayData, weekday == params$day)
 dayData <- select(dayData, -c(instant, weekday))
 dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
+# Convert categorical variables to factors
+cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
+dayData[cols] <- lapply(dayData[cols], factor)
 # Split data to train and test sets
 set.seed(1)
 dayIndex <- createDataPartition(dayData$cnt, p = 0.7, list = FALSE)
 dayTrain <- dayData[dayIndex, ]
 dayTest <- dayData[-dayIndex, ]
-# Convert categorical variables to factors
-cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
-dayTrain[cols] <- lapply(dayTrain[cols], factor)
-dayTest[cols] <- lapply(dayTest[cols], factor)
 ```   
 
 ### Numerical summaries    
 
 #### Overall summary on training data set
+
+ADD DESCRIPTION
 
 ```{r}
 # Summarize training data set
@@ -66,7 +67,9 @@ datatable(dayTrain)
 kable(summary(dayTrain))
 ```    
 
-#### Contincgency tables on catogorical variables
+#### Contingency tables on catogorical variables
+
+ADD DESCRIPTION
 
 ```{r}
 # Contingency table comparing number of users by season
@@ -85,18 +88,18 @@ twoWayTab <- table(dayTrainCopy$season,
 kable(twoWayTab, caption = 'Season and Total Number of Users')
 ```   
 
+ADD DESCRIPTION
+
 ```{r}
 # Renaming factor levels
-levels(dayTrain$workingday) <- c("neither weekend nor holiday", "weekend or holiday")
-levels(crabData$spine) <- c("Both Good",	"One Worn/Broken",	"Both Worn/Broken")
-levels(crabData$y) <- c("No Satellite", "At least 1 Satellite")
-
-# Display the crabs data
-datatable(crabData, colnames = c("Color", "Spine Condition", "Width", "Satellites", "Present	Weight", "Satellite Indicator"))
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$workingday) <- c("neither weekend nor holiday", "weekend or holiday")
 
 # Comparing Number of Users by whether day is workingday or not (if day is neither weekend nor holiday is 1, otherwise is 0)
-tapply(X=dayTrain$cnt, INDEX=dayTrain$workingday, summary)
+tapply(X=dayTrainCopy$cnt, INDEX=dayTrainCopy$workingday, summary)
 ```    
+
+ADD DESCRIPTION
 
 ```{r}
 # Comparing Number of Users by weather conditions (1: Clear; 2: Mist + Cloudy; 3: Light Snow + Light Rain; 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog) 
@@ -170,7 +173,9 @@ g + geom_boxplot() +
        color='Month')
 ```     
 
-#### Plot the Correlation Matrix of Wether Data and Total Rental Bikes   
+#### Plot the Correlation Matrix of Weather Data and Total Rental Bikes   
+
+ADD DESCRIPTION
 
 ```{r}
 # Create correlation matrix
@@ -181,6 +186,8 @@ corrplot(round(CM,2), method="circle")
 
 #### Histogram for Total Rental Bikes    
 
+ADD DESCRIPTION
+
 ```{r}
 # Create a histogram plot for total rental bikes
 h <- ggplot(dayTrain, aes(x=cnt))
@@ -190,9 +197,16 @@ h + geom_histogram(bins=20, aes(y=..density..)) +
   ggtitle("Histogram for Total Rental Bikes")
 ```    
 
+ADD DESCRIPTION
+
 ```{r}
 # Create a histogram plot for total rental bikes
-d <- ggplot(dayTrain, aes(x=cnt))
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$season) <- list("Winter" = 1,
+                                    "Spring" = 2,
+                                    "Summer" = 3,
+                                    "Fall" = 4)
+d <- ggplot(dayTrainCopy, aes(x=cnt))
 d + geom_histogram(bins=20, aes(y=..density..)) + 
   geom_density(stat="density", adjust=0.4, lwd=2, colour= "red") +
     facet_wrap(~ season, ncol = 2) +
@@ -200,14 +214,13 @@ d + geom_histogram(bins=20, aes(y=..density..)) +
   ggtitle("Histogram for Total Rental Bikes by Season")
 ```    
 
-
 ## Modelling, Selection, and Prediction  
 
 ### Linear Regression Models on Training Dataset    
 
-#### Linear regression model with cnt as predictor and weather data as predictors
-
 A linear regression model is a tool used to predict values of a certain variable (the "response"/"dependent" variable) based on one variable or a set of variables ("predictor"/"independent" variables). Linear regression models can contain many different variables that may interact with each other (in which case we may add interaction or polynomial terms to the model). We can fit linear regression models to scatterplots to evaluate the correlation and relationship between two variables.    
+
+#### Linear regression model with cnt as predictor and weather data as predictors
 
 ```{r}
 # Define training control
@@ -256,10 +269,12 @@ fit3
 
 #### Boosted Tree Model    
 
+ADD DESCRIPTION
+
 ````{r}
 set.seed(123)
 # Fit the boosted tree model on training set
-fit4 <- train(class ~., data = diabetesDataTrain,
+fit4 <- train(cnt ~., data = select(dayTrain, -c(registered, casual)),
                          method = "gbm",
                          trControl = trctrl, # Passing trainControl() method
                          preProcess = c("center", "scale"), # Standardize the training dataset
@@ -267,27 +282,38 @@ fit4 <- train(class ~., data = diabetesDataTrain,
 fit4
 ```     
 
-### Model Comparision and Selection    
+### Model Selection   
 
-Choose the best model    
-
-Fit the best model on the full data set    
-
-
-### Using Best Models Make Predictions on Testing Dataset    
-
-Use the final model make predictions on testing set    
+#### Predict on Test Set
 
 ```{r}
-
+dayTestFiltered <- select(dayTest, -c(registered, casual))
+predfit1 <- predict(fit1, newdata = dayTestFiltered)
+predfit2 <- predict(fit2, newdata = dayTestFiltered)
+predfit3 <- predict(fit3, newdata = dayTestFiltered)
+predfit4 <- predict(fit4, newdata = dayTestFiltered)
 ```
 
+#### Compare Models
 
-## Conclusion and Discussion    
+```{r}
+testResults <- rbind(postResample(predfit1, dayTestFiltered$cnt),
+                     postResample(predfit2, dayTestFiltered$cnt),
+                     postResample(predfit3, dayTestFiltered$cnt),
+                     postResample(predfit4, dayTestFiltered$cnt))
+testResults <- data.frame(testResults)
+row.names(testResults) <- c("Linear Regression",
+                       "Poisson Regression",
+                       "Random Forest",
+                       "Boosted Tree")
+# show RMSE values for all models
+kable(testResults)
+```
 
-Conclusion    
+#### Declare Winner
 
-
-Discussion    
-
-
+```{r}
+# find best model with lowest RMSE value
+bestModel <- rownames(testResults[testResults$RMSE == min(testResults$RMSE), ])
+print(paste("Best model to use:", bestModel))
+```
