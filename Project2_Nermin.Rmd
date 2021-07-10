@@ -64,7 +64,7 @@ kable(twoWayTab, caption = 'Season and Total Number of Users')
 
 The summary statistics for 2011 and 2012 user counts are grouped below separately. Summary statistics for Registered, Casual, and Total Users can be compared between the years for this day. The difference in the median number of total users between the two tables is useful to measure how many more or less there were users overall between the years.
 
-```{r, echo = TRUE}
+```{r}
 # Subset by columns we want to analyze
 userCountStats <- dayTrain[ , c("casual", "registered", "cnt", "yr")]
 colnames(userCountStats) <- c("Casual Users", "Registered Users", "Total Users", "Year")
@@ -85,7 +85,7 @@ kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
 
 The stacked bar plot below allows us to compare counts of the total number of users between the years and seasons. The stacked nature of the barplot gives us a good idea of the proportion of users for each season, and whether there have been any significant differences among these proportions between the two years.
 
-```{r, echo = TRUE}
+```{r}
 dayTrainCopy <- dayTrain
 levels(dayTrainCopy$yr) <- list("2011" = 0,
                                 "2012" = 1)
