@@ -60,6 +60,70 @@ twoWayTab <- table(dayTrainCopy$season,
 kable(twoWayTab, caption = 'Season and Total Number of Users')
 ```
 
+### Numerical Summaries of Registered and Casual User Counts By Year
+
+The summary statistics for 2011 and 2012 user counts are grouped below separately. Summary statistics for Registered, Casual, and Total Users can be compared between the years for this day. The difference in the median number of total users between the two tables is useful to measure how many more or less there were users overall between the years.
+
+```{r, echo = TRUE}
+# Subset by columns we want to analyze
+userCountStats <- dayTrain[ , c("casual", "registered", "cnt", "yr")]
+colnames(userCountStats) <- c("Casual Users", "Registered Users", "Total Users", "Year")
+# Function for summary statistics for casual and registered user counts
+userCountsFiltered <- filter(userCountStats, Year == 0)[, -4]
+kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
+      caption = "Summary of 2011")
+
+# Function for summary statistics for casual and registered user counts
+userCountsFiltered <- filter(userCountStats, Year == 1)[, -4]
+kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
+      caption = "Summary of 2012")
+```
+
+### Stacked Barplot of Total User Count by Year and Seasons
+
+The stacked bar plot below allows us to compare counts of the total number of users between the years and seasons. The stacked nature of the barplot gives us a good idea of the proportion of users for each season, and whether there have been any significant differences among these proportions between the two years.
+
+```{r, echo = TRUE}
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$yr) <- list("2011" = 0,
+                                "2012" = 1)
+levels(dayTrainCopy$season) <- list("Winter" = 1,
+                                    "Spring" = 2,
+                                    "Summer" = 3,
+                                    "Fall" = 4)
+g <- ggplot(dayTrainCopy, aes(x = yr, fill = season))
+g + geom_bar(aes(weight = cnt), position = "stack") +
+    labs(x = "Year", y = "Total User Count") +
+    scale_fill_discrete(name = "Season")
+```
+### Scatterplot of Temperature and Total User Count
+
+This scatterplot shows us the relationship between the numeric variables temperature and total user count. The plot allows us to quickly see whether there is a positive or negative relationship between temperature and total user count, as well as the strength of this relationship.
+
+```{r}
+ggplot(dayTrain, aes(x = temp, y = cnt)) +
+  geom_point(stat = "identity") +
+  geom_smooth(data = dayTrain, aes(x = temp, y = cnt), method = "lm") +
+  labs(x = "Temperature", y = "Total User Count")
+```
+
+### Barplot of Number of Users by Month
+
+The below barplot shows us the relationship between number of users by month, the spread and variability of the user counts, as well as summary statistics like the mean, minimum, maximum, and interquartile ranges for the number of users for each month.
+
+```{r}
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$mnth) <- list("Jan" = 1, "Feb" = 2, "Mar" = 3, "Apr" = 4,
+                                "May" = 5, "Jun" = 6, "Jul" = 7, "Aug" = 8,
+                                "Sep" = 9, "Oct" = 10, "Nov" = 11, "Dec" = 12)
+g <- ggplot(dayTrainCopy, aes(x = mnth, y = cnt))
+g + geom_boxplot() +
+  geom_point(aes(col = mnth), alpha = 1, size = 1, position = "jitter") +
+  labs(title = "Boxplot for Number of Users by Month",
+       x = "Month",
+       y = "Number of Users",
+       color='Month')
+```
 
 
 ## Predictive Modeling
