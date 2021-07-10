@@ -1,2 +1,0 @@
-"0","# Summarize training data set"
-"0","knitr::kable(summary(dayTrain))"

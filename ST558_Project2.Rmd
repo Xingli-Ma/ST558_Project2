@@ -6,35 +6,42 @@ output:
   github_document:
     toc: yes
     toc_depth: 3
+params:
+  day: 1
 ---       
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, error = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
 ```         
 
-The following R packages are required to run the code to create this gitbub page.    
+Note: The following R packages are required to run the code to create this gitbub page.    
 
 ```{r}
 require(rmarkdown)
 require(knitr)
-require(dplyr)
 require(tidyverse)
+require(dplyr)
 require(ggplot2)
 require(caret)
+require(DT)
+#install.packages("corrplot")
+require(corrplot)
 ```             
 
 ## Introduction    
 
 The purpose of this project is to create predictive models and automate Markdown reports. The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file include 16 columns: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed description on these variables can be find from the data website. In our predictive models, we want to use cnt as response, other variables as predictors, such as season, weekday, workingda, weathersit, temp, atemp, hum, windspeed. We will create seven predictive models, one for each day in a week, to predict the number of bike users in each day of the week.
-The main contents include: **Introduction**, **Data Split**, **Modeling, Selection, & Prediction**, and **Conclusion and Discussion**.
+The main contents include: **Introduction**, **Data Exploration Analysis**, **Modeling, Selection, and Prediction**, and **Conclusion and Discussion**.    
 
 
-## Read Data and Split Data into Training and Testing Sets   
+## Data Exploration Analysis
+
+### Read Data and Split the Data into Training and Testing Sets   
 
 ```{r}
 # Read and clean data
 dayData <- read_csv("day.csv")
-dayData <- filter(dayData, weekday == 1)
+dayData <- filter(dayData, weekday == params$day)
 dayData <- select(dayData, -c(instant, weekday))
 dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 # Split data to train and test sets
@@ -48,91 +55,226 @@ dayTrain[cols] <- lapply(dayTrain[cols], factor)
 dayTest[cols] <- lapply(dayTest[cols], factor)
 ```   
 
-## Data Exploration Analysis    
+### Numerical summaries    
 
-Numerical summaries
+#### Overall summary on training data set
 
 ```{r}
 # Summarize training data set
-knitr::kable(summary(dayTrain))
-# Contingency table
-table(dayTrain$workingday, dayTrain$holiday)
-table(dayTrain$weathersit, dayTrain$season)
+datatable(dayTrain)
+# Display the training data set
+kable(summary(dayTrain))
 ```    
 
-Graphical summaries    
+#### Contincgency tables on catogorical variables
 
 ```{r}
+# Contingency table comparing number of users by season
+dayTrainCopy <- dayTrain
+dayTrainCopy$cntRange <- cut(dayTrainCopy$cnt, c(0, 2000, 4000, 6000))
+levels(dayTrainCopy$cntRange) = c("<2000", "2001-4000", "4001-6000", ">6000")
 
+levels(dayTrainCopy$season) <- list("Winter" = 1,
+                                    "Spring" = 2,
+                                    "Summer" = 3,
+                                    "Fall" = 4)
+
+twoWayTab <- table(dayTrainCopy$season,
+                   dayTrainCopy$cntRange)
+# Comparing Number of Users by Season
+kable(twoWayTab, caption = 'Season and Total Number of Users')
+```   
+
+```{r}
+# Renaming factor levels
+levels(dayTrain$workingday) <- c("neither weekend nor holiday", "weekend or holiday")
+levels(crabData$spine) <- c("Both Good",	"One Worn/Broken",	"Both Worn/Broken")
+levels(crabData$y) <- c("No Satellite", "At least 1 Satellite")
+
+# Display the crabs data
+datatable(crabData, colnames = c("Color", "Spine Condition", "Width", "Satellites", "Present	Weight", "Satellite Indicator"))
+
+# Comparing Number of Users by whether day is workingday or not (if day is neither weekend nor holiday is 1, otherwise is 0)
+tapply(X=dayTrain$cnt, INDEX=dayTrain$workingday, summary)
+```    
+
+```{r}
+# Comparing Number of Users by weather conditions (1: Clear; 2: Mist + Cloudy; 3: Light Snow + Light Rain; 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog) 
+tapply(X=dayTrain$cnt, INDEX=dayTrain$weathersit, summary)
+```    
+
+#### Numerical Summaries of Registered and Casual User Counts By Year
+
+The summary statistics for 2011 and 2012 user counts are grouped below separately. Summary statistics for Registered, Casual, and Total Users can be compared between the years for this day. The difference in the median number of total users between the two tables is useful to measure how many more or less there were users overall between the years.
+
+```{r}
+# Subset by columns we want to analyze
+userCountStats <- dayTrain[ , c("casual", "registered", "cnt", "yr")]
+colnames(userCountStats) <- c("Casual Users", "Registered Users", "Total Users", "Year")
+# Function for summary statistics for casual and registered user counts
+userCountsFiltered <- filter(userCountStats, Year == 0)[, -4]
+kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
+      caption = "Summary of 2011")
+
+# Function for summary statistics for casual and registered user counts
+userCountsFiltered <- filter(userCountStats, Year == 1)[, -4]
+kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
+      caption = "Summary of 2012")
+```    
+
+### Graphical summaries    
+
+#### Stacked Barplot of Total User Count by Year and Seasons    
+
+The stacked bar plot below allows us to compare counts of the total number of users between the years and seasons. The stacked nature of the barplot gives us a good idea of the proportion of users for each season, and whether there have been any significant differences among these proportions between the two years.    
+
+```{r}
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$yr) <- list("2011" = 0,
+                                "2012" = 1)
+levels(dayTrainCopy$season) <- list("Winter" = 1,
+                                    "Spring" = 2,
+                                    "Summer" = 3,
+                                    "Fall" = 4)
+g <- ggplot(dayTrainCopy, aes(x = yr, fill = season))
+g + geom_bar(aes(weight = cnt), position = "stack") +
+    labs(x = "Year", y = "Total User Count") +
+    scale_fill_discrete(name = "Season")
+```
+#### Scatterplot of Temperature and Total User Count    
+
+This scatterplot shows us the relationship between the numeric variables temperature and total user count. The plot allows us to quickly see whether there is a positive or negative relationship between temperature and total user count, as well as the strength of this relationship.    
+
+```{r}
+ggplot(dayTrain, aes(x = temp, y = cnt)) +
+  geom_point(stat = "identity") +
+  geom_smooth(data = dayTrain, aes(x = temp, y = cnt), method = "lm") +
+  labs(x = "Temperature", y = "Total User Count")
+```    
+
+#### Barplot of Number of Users by Month    
+
+The below barplot shows us the relationship between number of users by month, the spread and variability of the user counts, as well as summary statistics like the mean, minimum, maximum, and interquartile ranges for the number of users for each month.    
+
+```{r}
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$mnth) <- list("Jan" = 1, "Feb" = 2, "Mar" = 3, "Apr" = 4,
+                                "May" = 5, "Jun" = 6, "Jul" = 7, "Aug" = 8,
+                                "Sep" = 9, "Oct" = 10, "Nov" = 11, "Dec" = 12)
+g <- ggplot(dayTrainCopy, aes(x = mnth, y = cnt))
+g + geom_boxplot() +
+  geom_point(aes(col = mnth), alpha = 1, size = 1, position = "jitter") +
+  labs(title = "Boxplot for Number of Users by Month",
+       x = "Month",
+       y = "Number of Users",
+       color='Month')
+```     
+
+#### Plot the Correlation Matrix of Wether Data and Total Rental Bikes   
+
+```{r}
+# Create correlation matrix
+CM <- cor(dayTrain[, c("temp", "atemp", "hum", "windspeed", "cnt")])
+# Plot the correlation matrix
+corrplot(round(CM,2), method="circle")
+```    
+
+#### Histogram for Total Rental Bikes    
+
+```{r}
+# Create a histogram plot for total rental bikes
+h <- ggplot(dayTrain, aes(x=cnt))
+h + geom_histogram(bins=20, aes(y=..density..)) + 
+  geom_density(stat="density", adjust=0.4, lwd=2, colour= "red") +
+  xlab("Total Rental Bikes") + ylab("Density") +
+  ggtitle("Histogram for Total Rental Bikes")
+```    
+
+```{r}
+# Create a histogram plot for total rental bikes
+d <- ggplot(dayTrain, aes(x=cnt))
+d + geom_histogram(bins=20, aes(y=..density..)) + 
+  geom_density(stat="density", adjust=0.4, lwd=2, colour= "red") +
+    facet_wrap(~ season, ncol = 2) +
+  xlab("Total Rental Bikes") + ylab("Density") +
+  ggtitle("Histogram for Total Rental Bikes by Season")
+```    
+
+
+## Modelling, Selection, and Prediction  
+
+### Linear Regression Models on Training Dataset    
+
+#### Linear regression model with cnt as predictor and weather data as predictors
+
+A linear regression model is a tool used to predict values of a certain variable (the "response"/"dependent" variable) based on one variable or a set of variables ("predictor"/"independent" variables). Linear regression models can contain many different variables that may interact with each other (in which case we may add interaction or polynomial terms to the model). We can fit linear regression models to scatterplots to evaluate the correlation and relationship between two variables.    
+
+```{r}
+# Define training control
+trctrl <- trainControl(method = "cv", number = 10)
+# Set seed for reproducible
+set.seed(123)
+# Fit the linear regression model with cnt as response and weather data as predictors
+fit1 <- train(cnt ~ weathersit + temp + atemp + hum + windspeed +
+                  I(`temp`^2) + I(`atemp`^2) + I(`hum`^2) +
+                  I(`windspeed`^2),
+               data = select(dayTrain, -c(registered, casual)),
+               method = "glm",
+               preProcess = c("center", "scale"),
+               trControl = trctrl)
+fit1
 ```
 
+#### Poisson Regression Model   
 
-## Modelling, Selection, & Prediction    
-
-### Poisson Regression Model   
-
-```{r}
-glmFit <- train(cnt ~ ., data = dayTrain,
+```{r}    
+set.seed(123)
+# Fit Poisson model on traing set
+fit2 <- train(cnt ~ ., data = select(dayTrain, -c(registered, casual)),
                method = "glm",
                family = "poisson",
                preProcess = c("center", "scale"),
-               trControl = trainControl(method = "cv", number = 10))
-glmFit
+               trControl = trctrl)
+fit2
 ```   
 
-### Logistic Regression Model    
+### Two Ensemble Models on Training Dataset   
+
+#### Random Forest Model    
+
+Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final mtry value used for the random forest model is the one in which RMSE is the smallest and Rsquared is the largest.
 
 ```{r}
-lmFit <- train(cnt ~ ., data = dayTrain,
-               method = "glm",
-               preProcess = c("center", "scale"),
-               trControl = trainControl(method = "cv", number = 10))
-lmFit
-```
-
-### Fit a random forest model on training dataset    
-
-Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final value used for the model was mtry = 26, where Rsquared equals 0.9507297.    
-
-```{r}
-# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
-trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
-# Set seed for reproducible
 set.seed(123)
-# Fit the random forest model with cnt as response and all other variables as
-# predictors on training set
-rfFit <- train(cnt ~ ., data = dayTrain,
+# Fit the random forest model on training set
+fit3 <- train(cnt ~ ., data = select(dayTrain, -c(registered, casual)),
                method = "rf",
                preProcess = c("center", "scale"),
                trControl = trctrl)
-rfFit
-```    
+fit3
+```      
 
+#### Boosted Tree Model    
 
-### Fit a boosted tree model on training dataset    
-```{r}
-# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
-trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
-# Set seed for reproducible
+````{r}
 set.seed(123)
-# Fit the boosted tree model with cnt as response and all other variables as 
-# predictors on training set
-boostedTree_fit <- train(cnt ~., data = dayTrain,
+# Fit the boosted tree model on training set
+fit4 <- train(class ~., data = diabetesDataTrain,
                          method = "gbm",
-                         verbose = FALSE,
                          trControl = trctrl, # Passing trainControl() method
-                         preProcess = c("center", "scale")) # Standardize the training dataset
-boostedTree_fit
+                         preProcess = c("center", "scale"), # Standardize the training dataset
+                         verbose = FALSE)
+fit4
 ```     
 
-### Model Selection    
+### Model Comparision and Selection    
 
 Choose the best model    
 
 Fit the best model on the full data set    
 
 
-### Prediction    
+### Using Best Models Make Predictions on Testing Dataset    
 
 Use the final model make predictions on testing set    
 
