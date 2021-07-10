@@ -1,0 +1,6 @@
+"0","require(rmarkdown)"
+"0","require(knitr)"
+"0","require(dplyr)"
+"0","require(tidyverse)"
+"0","require(ggplot2)"
+"0","require(caret)"

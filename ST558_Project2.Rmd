@@ -1,0 +1,151 @@
+---
+title: "Project 2"
+author: "Nermin Bibic, Xingli Ma"
+date: "July 8, 2021"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 3
+---       
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, error = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
+```         
+
+The following R packages are required to run the code to create this gitbub page.    
+
+```{r}
+require(rmarkdown)
+require(knitr)
+require(dplyr)
+require(tidyverse)
+require(ggplot2)
+require(caret)
+```             
+
+## Introduction    
+
+The purpose of this project is to create predictive models and automate Markdown reports. The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file include 16 columns: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed description on these variables can be find from the data website. In our predictive models, we want to use cnt as response, other variables as predictors, such as season, weekday, workingda, weathersit, temp, atemp, hum, windspeed. We will create seven predictive models, one for each day in a week, to predict the number of bike users in each day of the week.
+The main contents include: **Introduction**, **Data Split**, **Modeling, Selection, & Prediction**, and **Conclusion and Discussion**.
+
+
+## Read Data and Split Data into Training and Testing Sets   
+
+```{r}
+# Read and clean data
+dayData <- read_csv("day.csv")
+dayData <- filter(dayData, weekday == 1)
+dayData <- select(dayData, -c(instant, weekday))
+dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
+# Split data to train and test sets
+set.seed(1)
+dayIndex <- createDataPartition(dayData$cnt, p = 0.7, list = FALSE)
+dayTrain <- dayData[dayIndex, ]
+dayTest <- dayData[-dayIndex, ]
+# Convert categorical variables to factors
+cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
+dayTrain[cols] <- lapply(dayTrain[cols], factor)
+dayTest[cols] <- lapply(dayTest[cols], factor)
+```   
+
+## Data Exploration Analysis    
+
+Numerical summaries
+
+```{r}
+# Summarize training data set
+knitr::kable(summary(dayTrain))
+# Contingency table
+table(dayTrain$workingday, dayTrain$holiday)
+table(dayTrain$weathersit, dayTrain$season)
+```    
+
+Graphical summaries    
+
+```{r}
+
+```
+
+
+## Modelling, Selection, & Prediction    
+
+### Poisson Regression Model   
+
+```{r}
+glmFit <- train(cnt ~ ., data = dayTrain,
+               method = "glm",
+               family = "poisson",
+               preProcess = c("center", "scale"),
+               trControl = trainControl(method = "cv", number = 10))
+glmFit
+```   
+
+### Logistic Regression Model    
+
+```{r}
+lmFit <- train(cnt ~ ., data = dayTrain,
+               method = "glm",
+               preProcess = c("center", "scale"),
+               trControl = trainControl(method = "cv", number = 10))
+lmFit
+```
+
+### Fit a random forest model on training dataset    
+
+Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final value used for the model was mtry = 26, where Rsquared equals 0.9507297.    
+
+```{r}
+# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
+# Set seed for reproducible
+set.seed(123)
+# Fit the random forest model with cnt as response and all other variables as
+# predictors on training set
+rfFit <- train(cnt ~ ., data = dayTrain,
+               method = "rf",
+               preProcess = c("center", "scale"),
+               trControl = trctrl)
+rfFit
+```    
+
+
+### Fit a boosted tree model on training dataset    
+```{r}
+# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
+# Set seed for reproducible
+set.seed(123)
+# Fit the boosted tree model with cnt as response and all other variables as 
+# predictors on training set
+boostedTree_fit <- train(cnt ~., data = dayTrain,
+                         method = "gbm",
+                         verbose = FALSE,
+                         trControl = trctrl, # Passing trainControl() method
+                         preProcess = c("center", "scale")) # Standardize the training dataset
+boostedTree_fit
+```     
+
+### Model Selection    
+
+Choose the best model    
+
+Fit the best model on the full data set    
+
+
+### Prediction    
+
+Use the final model make predictions on testing set    
+
+```{r}
+
+```
+
+
+## Conclusion and Discussion    
+
+Conclusion    
+
+
+Discussion    
+
+
