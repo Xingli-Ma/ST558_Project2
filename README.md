@@ -1,28 +1,30 @@
-gi## Project 2    
+## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set  
 
 ### Introduction        
 
-The purpose is to create **predictive models** and automate **Markdown reports**. The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file include 16 columns: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed description on these variables can be find from the data website. In our predictive models, we want to use cnt as response, other variables as predictors, such as season, weekday, workingda, weathersit, temp, atemp, hum, windspeed. We will create seven predictive models, one for each day in a week, to predict the number of bike users in each day of the week. The main contents include: **Introduction**, **Data Split**, **Modeling, Selection, & Prediction**, and **Conclusion and Discussion**.        
-
-```markdown      
-The following R packages are required to run the code to create this gitbub page.      
+The purpose of this project is to create predictive models and automate Markdown reports. The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file includes 16 variables: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed descriptions on these variables can be found from the [data website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). In our predictive models, we use cnt as response, other variables as predictors, such as season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed. First, We filtered the data set by each day in the week, and split the day data into training and testing sets(7:3). Then, we did numerical and graphical summaries of the training data set. Then, we trained four predictive models on the training data set, and tested all four models on the testing set. We compared and selected the best model based on the smallest RMSE value. Finally, we automated the whole analysis processes to predict the number of bike users on each day of the week, and produced one report for each day in a week.                
+     
+**Note**: The following R packages are required to run the code to create this gitbub page.      
 
 ```{r}
 require(rmarkdown)
 require(knitr)
-require(dplyr)
 require(tidyverse)
+require(dplyr)
 require(ggplot2)
-```     
-
-### Data Split          
-
--- Data Exploratory        
-
--- Data Split     
+require(caret)
+require(DT)
+require(corrplot)
+```        
 
 
-### Modelling, Selection, & Prediction        
+### Data Exploration Analysis        
+
+You can find the numerical and graphical summaries on each day of the week by clicking the link to the corresponding report.   
+
+### Modelling, Selection, and Prediction     
+
+Please see the detailed report for the best model that we select for each day of the week to predict the number of rental bikes.    
 
 (Monday's Analysis)[MondayAnalysis.md]      
 
@@ -36,17 +38,12 @@ require(ggplot2)
 
 (Saturday's Analysis)[SaturdayAnalysis.md]      
 
-(Sunday's Analysis)[SundayAnalysis.md]      
+(Sunday's Analysis)[SundayAnalysis.md]          
 
 
-### Conclusion and Discussion      
 
--- Conclusion          
+### Reference    
 
--- Discussion            
-
-
-### Reference      
 https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
-```    
+
 
