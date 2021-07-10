@@ -41,25 +41,32 @@ dayTest[cols] <- lapply(dayTest[cols], factor)
 
 ## Predictive Modeling
 
-### Linear Regression With Main Effects & Interactions
+Prior to the models fit using linear regression, the first group member should provide a short but thorough explanation of the idea of a linear regression model.
+
+### Linear Regression With Main Effects & 1st Order Interactions
 
 ```{r}
-lmFit <- train(cnt ~ .^2, data = dayTrain,
-               method = "lm",
-               preProcess = c("center", "scale"),
-               trControl = trainControl(method = "cv", number = 10))
+
 ```
 
-### Random Forest
+Prior to each ensemble model, you should provide a short but reasonably thorough explanation of the ensemble model you are using (so one for each group member).
+
+### Fit a random forest model on training dataset
+
+Random forest modeling involves multiple decision trees that form an ensemble. Random forest models are the same idea as bagging, but it makes bagged trees predictions more correlated with a smaller reduction in variance from aggregation. Since the random forest model selects a subset of predictors randomly, good predictors won't dominate the tree fits. If there is a very strong predictor, every bootstrap tree will likely use it for the first split. Here we are fitting a random forest model for the train set.
 
 ```{r}
+# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
+# Set seed for reproducible
+set.seed(123)
+# Fit the random forest model with cnt as response and all other variables as
+# predictors on training set
 rfFit <- train(cnt ~ ., data = dayTrain,
                method = "rf",
                preProcess = c("center", "scale"),
-               trControl = trainControl(method = "cv",
-                                        number = 5),
-               tuneGrid = data.frame(mtry = 1:9)
-               )
+               trControl = trctrl)
+rfFit
 ```
 
 
