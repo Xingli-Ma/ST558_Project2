@@ -79,6 +79,8 @@ kable(do.call(cbind, lapply(userCountsFiltered, summary, digits = 3)),
       caption = "Summary of 2012")
 ```
 
+## Plots
+
 ### Stacked Barplot of Total User Count by Year and Seasons
 
 The stacked bar plot below allows us to compare counts of the total number of users between the years and seasons. The stacked nature of the barplot gives us a good idea of the proportion of users for each season, and whether there have been any significant differences among these proportions between the two years.
@@ -125,20 +127,33 @@ g + geom_boxplot() +
        color='Month')
 ```
 
+## Linear Regression Models
 
-## Predictive Modeling
+A linear regression model is a tool used to predict values of a certain variable (the "response"/"dependent" variable) based on one variable or a set of variables ("predictor"/"independent" variables). Linear regression models can contain many different variables that may interact with each other (in which case we may add interaction or polynomial terms to the model). We can fit linear regression models to scatterplots to evaluate the correlation and relationship between two variables.
 
-Provide a short but thorough explanation of the idea of a linear regression model.
-
-### Linear Regression With Main Effects & 1st Order Interactions
+### Fit a linear regression on training dataset using only weather data
 
 ```{r}
-
+# Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
+# Set seed for reproducible
+set.seed(123)
+# Fit the linear regression model with cnt as response and weather predictors on training set
+glmFit <- train(cnt ~ weathersit + temp + atemp + hum + windspeed +
+                  I(`temp`^2) + I(`atemp`^2) + I(`hum`^2) +
+                  I(`windspeed`^2),
+               data = select(dayTrain, -c(registered, casual)),
+               method = "glm",
+               preProcess = c("center", "scale"),
+               trControl = trctrl)
+glmFit
 ```
+
+## Ensemble Models
 
 ### Fit a random forest model on training dataset
 
-Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final value used for the model was mtry = 26, where Rsquared equals 0.9507297.
+Here we are fitting a random forest model for the train set. We standardize the variables by centering and scaling using the preProcess argument, and apply repeated cross validation. The final mtry value used for the random forest model is the one in which RMSE is the smallest and Rsquared is the largest.
 
 ```{r}
 # Set up fold number (10) for the cross validation and the repeated times (5) of the whole CV 
@@ -147,7 +162,7 @@ trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
 set.seed(123)
 # Fit the random forest model with cnt as response and all other variables as
 # predictors on training set
-rfFit <- train(cnt ~ ., data = dayTrain,
+rfFit <- train(cnt ~ ., data = select(dayTrain, -c(registered, casual)),
                method = "rf",
                preProcess = c("center", "scale"),
                trControl = trctrl)
