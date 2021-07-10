@@ -19,3 +19,4 @@ reports <- tibble(output_file, params)
 
 # Generate reports
 pwalk(reports, render, input = "ST558_Project2.Rmd")
+
