@@ -69,7 +69,7 @@ kable(summary(dayTrain))
 
 #### Contingency tables on catogorical variables
 
-ADD DESCRIPTION
+Ranges are created for the number of users in this contingency table. This allows us to see how many users there were for each season based on the ranges created: 0-2000, 2001-4000, 4001-6000, and over 6000. This will show us which season has the most users based on which range they fall mostly on.
 
 ```{r}
 # Contingency table comparing number of users by season
