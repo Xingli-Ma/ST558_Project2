@@ -16,9 +16,7 @@ require(ggplot2)
 require(caret)
 require(DT)
 require(corrplot)
-```        
-
-```markdown   
+```          
 
 ### Data Exploration Analysis        
 
