@@ -29,17 +29,17 @@ Please see the detailed report for the best model that we select for each day of
 
 [Monday's Analysis](MondayAnalysis.html)     
 
-[Tuesday's Analysis](TuesdayAnalysis.md)     
+[Tuesday's Analysis](TuesdayAnalysis.html)     
 
-[Wednesday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/WednesdayAnalysis.md)     
+[Wednesday's Analysis](WednesdayAnalysis.html)     
 
-[Thursday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/ThursdayAnalysis.md)      
+[Thursday's Analysis](ThursdayAnalysis.html)      
 
-[Friday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/FridayAnalysis.md)     
+[Friday's Analysis](FridayAnalysis.html)     
 
-[Saturday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SaturdayAnalysis.md)     
+[Saturday's Analysis](SaturdayAnalysis.html)     
 
-[Sunday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SundayAnalysis.md)         
+[Sunday's Analysis](SundayAnalysis.md)         
 ```
 
 
