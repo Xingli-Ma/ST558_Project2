@@ -1,5 +1,5 @@
 ```markdown
-## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set  
+## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set      
 
 ### Introduction        
 
@@ -27,7 +27,7 @@ You can find the numerical and graphical summaries on each day of the week by cl
 
 Please see the detailed report for the best model that we select for each day of the week to predict the number of rental bikes.    
 
-[Monday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/MondayAnalysis.md)     
+[Monday's Analysis](https://xingli-ma.github.io/ST558_Project2/MondayAnalysis.html)     
 
 [Tuesday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/TuesdayAnalysis.md)     
 
