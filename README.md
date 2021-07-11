@@ -1,4 +1,3 @@
-
 ## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set      
 
 ### Introduction        
@@ -22,28 +21,49 @@ require(corrplot)
 
 You can find the numerical and graphical summaries on each day of the week by clicking the link to the corresponding report.   
 
-### Modelling, Selection, and Prediction     
+### Modeling, Prediction, and Selection    
 
 Please see the detailed report for the best model that we select for each day of the week to predict the number of rental bikes.    
 
-[Monday's Analysis](MondayAnalysis.html)     
+[Monday's Analysis](MondayAnalysis.md)     
 
-[Tuesday's Analysis](TuesdayAnalysis.html)     
+[Tuesday's Analysis](TuesdayAnalysis.md)     
 
-[Wednesday's Analysis](WednesdayAnalysis.html)     
+[Wednesday's Analysis](WednesdayAnalysis.md)     
 
-[Thursday's Analysis](ThursdayAnalysis.html)      
+[Thursday's Analysis](ThursdayAnalysis.md)      
 
-[Friday's Analysis](FridayAnalysis.html)     
+[Friday's Analysis](FridayAnalysis.md)     
 
-[Saturday's Analysis](SaturdayAnalysis.html)     
+[Saturday's Analysis](SaturdayAnalysis.md)     
 
-[Sunday's Analysis](SundayAnalysis.html)         
+[Sunday's Analysis](SundayAnalysis.md)         
 
+### Automating Report for Each Day of the Week
 
+Running the below code produces reports for each day of the week. You may also run the Generate_Reports.R file to produce these reports.
+
+```{r}
+# Generate report for each day below
+weekdays <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+              "Saturday")
+
+# Numbers corresponding to days; 0 = Sunday, 1 = Monday, etc.
+dayNum <- c(0:6)
+
+# Create file names
+output_file <- paste0(weekdays, "Analysis")
+
+# Create a list for each day
+params = lapply(dayNum, FUN = function(x){list(day = x)})
+
+# Put into a data frame
+reports <- tibble(output_file, params)
+
+# Generate reports
+pwalk(reports, render, input = "ST558_Project2.Rmd")
+```
 
 ### Reference    
 
 https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
-
-

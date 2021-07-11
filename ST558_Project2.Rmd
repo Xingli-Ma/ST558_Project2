@@ -3,18 +3,18 @@ title: "Project 2"
 author: "Nermin Bibic, Xingli Ma"
 date: "July 8, 2021"
 output: 
-  html_document:
+  github_document:
     toc: yes
     toc_depth: 3
 params:
-  day: 1
+  day: 6
 ---       
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, error = TRUE, warning = FALSE, message = FALSE, cache = TRUE)
 ```         
 
-Note: The following R packages are required to run the code to create this gitbub page.    
+The following R packages are required to run the code to create this gitbub page.    
 
 ```{r}
 require(rmarkdown)
@@ -29,8 +29,7 @@ require(corrplot)
 
 ## Introduction    
 
-The purpose of this project is to create predictive models and automate Markdown reports. The day.csv file Bike Sharing Data Set was downloaded from [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file includes 16 variables: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed descriptions on these variables can be found from the [data website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). In our predictive models, we use cnt as response, other variables as predictors, such as season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed. First, We filtered the data set by each day in the week, and split the day data into training and testing sets(7:3). Then, we did numerical and graphical summaries of the training data set. Then, we trained four predictive models on the training data set, and tested all four models on the testing set. We compared and selected the best model based on the smallest RMSE value. Finally, we automated the whole analysis processes to predict the number of bike users on each day of the week, and produced one report for each day in a week.    
-
+The purpose of this project is to create predictive models and automate Markdown reports. The day.csv file from the Bike Sharing Data Set was downloaded from the [UCI Machine Learning Repository website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). The day.csv file includes 16 variables: instant, dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed, casual, registered, cnt. Detailed descriptions on these variables can be found from the [data website](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset). In our predictive models, we use cnt as the response variable, other variables as predictors, such as season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed. First, we filtered the data set by each day of the week and then split the day data into training and testing sets (7:3). Then, we did numerical and graphical summaries of the training data set. Then, we trained four predictive models on the training data set, and tested all four models on the testing set. We compared and selected the best model based on the smallest Root Mean Square Error (RMSE) value, selecting the model with the smallest error. Finally, we automated the whole analysis processes to produce a report for the number of bike users for each day of the week.
 
 ## Data Exploration Analysis
 
@@ -43,7 +42,8 @@ dayData <- filter(dayData, weekday == params$day)
 dayData <- select(dayData, -c(instant, weekday))
 dayData$dteday = as.Date(dayData$dteday, format = "%Y-%m-%d")
 # Convert categorical variables to factors
-cols <- c("season", "yr", "mnth", "holiday", "workingday", "weathersit")
+# For categorical variables with 0-1 binary, we don't need to convert to factors.
+cols <- c("season", "mnth", "weathersit")
 dayData[cols] <- lapply(dayData[cols], factor)
 # Split data to train and test sets
 set.seed(1)
@@ -56,30 +56,36 @@ dayTest <- dayData[-dayIndex, ]
 
 #### Overall Summary on Training Dataset
 
-Here we displayed the training data set and gave a numerical summary for all variables.    
+Here, we display a numerical summary (minimum, maximum, 1st quartile, 3rd quartile, median, and mean) for all of the quantitative variables of the dataset.  
 
 ```{r}
-# Summarize training data set
-datatable(dayTrain)
 # Display the training data set
-kable(summary(dayTrain))
+kable(summary(select(dayTrain, c(temp, atemp, hum, windspeed, casual,
+                                 registered, cnt))))
 ```    
 
 #### Comparing Number of Bike Users in Different Scenarios    
 
-First, we compared number of Users by whether day is workingday or not.
+First, we compared summary statistics of number of users by whether day is workingday or not.
 
 ```{r}
 # Renaming factor levels
 dayTrainCopy <- dayTrain
+dayTrainCopy$workingday <- as.factor(dayTrainCopy$workingday)
 levels(dayTrainCopy$workingday) <- c("neither weekend nor holiday", "weekend or holiday")
 tapply(X=dayTrainCopy$cnt, INDEX=dayTrainCopy$workingday, summary)
 ```    
 
-Second, we compared number of Users by weather conditions (1: Clear; 2: Mist + Cloudy; 3: Light Snow + Light Rain; 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog). 
+Second, we compared number of users by weather conditions.
 
 ```{r}
-tapply(X=dayTrain$cnt, INDEX=dayTrain$weathersit, summary)
+dayTrainCopy <- dayTrain
+levels(dayTrainCopy$weathersit) <- list(
+  "Clear, Few clouds, Partly cloudy" = 1,
+  "Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist" = 2,
+  "Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds" = 3
+  )
+tapply(X=dayTrainCopy$cnt, INDEX=dayTrainCopy$weathersit, summary)
 ```    
 
 #### Contingency Tables on Catogorical Variables
@@ -172,7 +178,7 @@ g + geom_boxplot() +
 
 #### Plot the Correlation Matrix of Weather Data and Total Rental Bikes   
 
-The plot shows the correlation between each Weather factors and the total number of rental bike users. Blue color indicates a positive effect, and red color a negative effect.
+The plot shows the correlation between each weather factors and the total number of rental bike users. Blue color indicates a positive effect, and red color a negative effect.
 
 ```{r}
 # Create correlation matrix
@@ -194,7 +200,7 @@ h + geom_histogram(bins=20, aes(y=..density..)) +
   ggtitle("Histogram for Total Rental Bikes")
 ```    
 
-The three histograms show the distribution of the number of bike users in different season.
+The four histograms below show the distribution of the number of bike users for each of the seasons. With the histograms in grid view, we are able to more clearly see the differences in distributions between the seasons.
 
 ```{r}
 # Create a histogram plot for total rental bikes
@@ -211,11 +217,11 @@ d + geom_histogram(bins=20, aes(y=..density..)) +
   ggtitle("Histogram for Total Rental Bikes by Season")
 ```    
 
-## Modelling, Selection, and Prediction  
+## Modeling, Prediction, and Selection
 
 ### Linear Regression Models on Training Dataset    
 
-A linear regression model is a tool used to predict values of a certain variable (the "response"/"dependent" variable) based on one variable or a set of variables ("predictor"/"independent" variables). Linear regression models can contain many different variables that may interact with each other (in which case we may add interaction or polynomial terms to the model). We can fit linear regression models to scatterplots to evaluate the correlation and relationship between two variables.    
+A linear regression model is a statistical tool used to predict values of a certain variable (the "response"/"dependent" variable) based on one variable or a set of variables ("predictor"/"independent" variables). Linear regression models can contain multiple variables that may interact with each other (in which case we may add interaction or polynomial terms to the model). We can fit linear regression models to scatterplots to help us see relationships between variables.    
 
 #### Generalized Linear Regression Model    
 
@@ -268,7 +274,7 @@ fit3
 
 #### Boosted Tree Model    
 
-Boosting trees grown sequentially. Each subsequent tree is grown on a modified version of original data. Predictions updated as trees grown. They are slowly training trees, so that not overfit.
+Boosting trees grow sequentially. Each subsequent tree is grown on a modified version of original data. Predictions update as trees are grown. They are slowly training trees, so that there is no overfit.
 
 ````{r}
 set.seed(123)
@@ -285,7 +291,7 @@ fit4
 
 #### Prediction on Testing Set    
 
-Using each of the four model make predictions on the testing data set.
+Using each of the four models, make predictions on the testing data set.
 
 ```{r}
 dayTestFiltered <- select(dayTest, -c(registered, casual))
@@ -315,7 +321,7 @@ kable(testResults)
 
 #### Declare the Winner
 
-Select the best model that have the smallest RMSE value.
+Select the best model that has the smallest RMSE value.
 
 ```{r}
 # Find the best model with lowest RMSE value
