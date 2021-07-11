@@ -26,19 +26,19 @@ You can find the numerical and graphical summaries on each day of the week by cl
 
 Please see the detailed report for the best model that we select for each day of the week to predict the number of rental bikes.    
 
-(Monday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/MondayAnalysis.md]      
+[Monday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/MondayAnalysis.md)     
 
-(Tuesday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/TuesdayAnalysis.md]      
+[Tuesday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/TuesdayAnalysis.md)     
 
-(Wednesday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/WednesdayAnalysis.md]      
+[Wednesday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/WednesdayAnalysis.md)     
 
-(Thursday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/ThursdayAnalysis.md]      
+[Thursday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/ThursdayAnalysis.md)      
 
-(Friday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/FridayAnalysis.md]      
+[Friday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/FridayAnalysis.md)     
 
-(Saturday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/SaturdayAnalysis.md]      
+[Saturday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SaturdayAnalysis.md)     
 
-(Sunday's Analysis)[https://github.com/Xingli-Ma/ST558_Project2/blob/main/SundayAnalysis.md]          
+[Sunday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SundayAnalysis.md)         
 
 
 
