@@ -1,4 +1,4 @@
-```markdown
+
 ## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set      
 
 ### Introduction        
@@ -18,6 +18,7 @@ require(DT)
 require(corrplot)
 ```        
 
+```markdown   
 
 ### Data Exploration Analysis        
 
