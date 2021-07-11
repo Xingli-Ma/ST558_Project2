@@ -9,8 +9,8 @@ opts_chunk$set(echo = TRUE, eval = TRUE, error = TRUE, warning = FALSE, message 
 dayData <- read_csv("day.csv")
 dayData
 
-#rmarkdown::render("ST558_Project2.Rmd", output_file = "MondayAnalysis.html",
-#                  params = list(day = "Monday"))
+rmarkdown::render("ST558_Project2.Rmd", output_file = "MondayAnalysis.html",
+                  params = list(day = "Monday"))
 
 data.frame(output_file = "MondayAnalysis.html", params = list(day = "Monday"))
 
@@ -19,7 +19,8 @@ weekdays <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
               "Saturday")
 
 # Numbers corresponding to days; 0 = Sunday, 1 = Monday, etc.
-dayNum <- c(0:6)
+
+#dayNum <- c(0:6)
 
 # Create file names
 output_file <- paste0(weekdays, "Analysis.md")
@@ -28,8 +29,8 @@ output_file <- paste0(weekdays, "Analysis.md")
 #get unique days
 dayIDs <- unique(dayData$weekday)
 
-#create filenames
-#output_file <- paste0(dayIDs, ".html")
+#create file names
+output_file <- paste0(dayIDs, ".html")
 
 #create a list for each team with just the team name parameter
 params = lapply(dayIDs, FUN = function(x){list(day = x)})

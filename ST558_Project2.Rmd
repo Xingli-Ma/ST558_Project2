@@ -2,9 +2,8 @@
 title: "Project 2"
 author: "Nermin Bibic, Xingli Ma"
 date: "July 8, 2021"
-output:
-  always_allow_html: true
-  github_document: 
+output: 
+  html_document:
     toc: yes
     toc_depth: 3
 params:
