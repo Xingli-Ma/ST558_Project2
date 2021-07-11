@@ -39,8 +39,8 @@ Please see the detailed report for the best model that we select for each day of
 
 [Saturday's Analysis](SaturdayAnalysis.html)     
 
-[Sunday's Analysis](SundayAnalysis.md)         
-```
+[Sunday's Analysis](SundayAnalysis.html)         
+
 
 
 ### Reference    
