@@ -1,3 +1,4 @@
+```markdown
 ## Project 2: Creating Predictive Models and Automating Markdown Reports on Bike Sharing Data Set  
 
 ### Introduction        
@@ -39,7 +40,7 @@ Please see the detailed report for the best model that we select for each day of
 [Saturday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SaturdayAnalysis.md)     
 
 [Sunday's Analysis](https://github.com/Xingli-Ma/ST558_Project2/blob/main/SundayAnalysis.md)         
-
+```
 
 
 ### Reference    
